@@ -7,7 +7,7 @@ CREATE TABLE units (
 
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at DATETIME          DEFAULT NULL,
+    deleted_at DATETIME          DEFAULT NULL
 );
 
 -- +goose Down

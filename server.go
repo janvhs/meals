@@ -6,17 +6,22 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/pocketbase/dbx"
 )
+
+var _ http.Handler = (*Server)(nil)
 
 type Server struct {
 	Router chi.Router
+	DB     *dbx.DB
 }
 
-func NewServer() *Server {
+func NewServer(db *dbx.DB) *Server {
 	r := chi.NewRouter()
 
 	srv := &Server{
 		Router: r,
+		DB:     db,
 	}
 
 	srv.registerMiddleware()

@@ -45,6 +45,9 @@ func ConnectDB(dbPath string) (*dbx.DB, error) {
 }
 
 func Migrate(db *sql.DB) error {
+	// TODO: Make an slog compatible logger or fork goose
+	goose.SetLogger(goose.NopLogger())
+
 	err := goose.SetDialect(driverName)
 	if err != nil {
 		return err

@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"path/filepath"
 
-	"github.com/pocketbase/dbx"
+	"github.com/jmoiron/sqlx"
 	"github.com/pressly/goose/v3"
 	_ "modernc.org/sqlite"
 )
@@ -26,9 +26,9 @@ func ResolveDBPath(path string) (string, error) {
 	return path, nil
 }
 
-// Copied and modified from pocketbase
+// Pragmas and comments copied and modified from pocketbase
 // Source: https://github.com/pocketbase/pocketbase/blob/f266621a0faa68edcd2def57ca6059d203ec15ad/core/db_nocgo.go#L10C1-L22C2.
-func ConnectDB(dbPath string) (*dbx.DB, error) {
+func ConnectDB(dbPath string) (*sqlx.DB, error) {
 	pragmas := ""
 
 	// Note: the busy_timeout pragma must be first because
@@ -36,7 +36,7 @@ func ConnectDB(dbPath string) (*dbx.DB, error) {
 	// is set in case it hasn't been already set by another connection.
 	// pragmas := "?_pragma=busy_timeout(10000)&_pragma=journal_mode(WAL)&_pragma=journal_size_limit(200000000)&_pragma=synchronous(NORMAL)&_pragma=foreign_keys(ON)&_pragma=temp_store(MEMORY)&_pragma=cache_size(-16000)"
 
-	db, err := dbx.Open(driverName, dbPath+pragmas)
+	db, err := sqlx.Connect(driverName, dbPath+pragmas)
 	if err != nil {
 		return nil, err
 	}

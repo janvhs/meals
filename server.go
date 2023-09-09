@@ -6,17 +6,17 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/pocketbase/dbx"
+	"github.com/jmoiron/sqlx"
 )
 
 var _ http.Handler = (*Server)(nil)
 
 type Server struct {
 	Router chi.Router
-	DB     *dbx.DB
+	DB     *sqlx.DB
 }
 
-func NewServer(db *dbx.DB) *Server {
+func NewServer(db *sqlx.DB) *Server {
 	r := chi.NewRouter()
 
 	srv := &Server{

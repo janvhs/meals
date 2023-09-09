@@ -35,7 +35,7 @@ func mainE() error {
 	}
 	defer db.Close()
 
-	err = Migrate(db.DB())
+	err = Migrate(db.DB)
 	if err != nil {
 		return err
 	}

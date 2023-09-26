@@ -17,6 +17,9 @@ type Server struct {
 }
 
 func NewServer(db *sqlx.DB) *Server {
+	// TODO: Set r.NotFound() to json.
+	// TODO: Set r.MethodNotAllowed() to json.
+
 	r := chi.NewRouter()
 
 	srv := &Server{
@@ -61,6 +64,8 @@ func (s *Server) registerMiddleware() {
 	// Remove any trailing slash from the requested resource path
 	s.Router.Use(middleware.StripSlashes)
 
+	// TODO: Add auth middleware
+
 	// TODO: Add some kind of rate limiting (uber)
 	// TODO: Add CORS (rs/cors) https://github.com/rs/cors/blob/master/examples/chi/server.go
 	// TODO: Add CSRF protection
@@ -72,6 +77,7 @@ func (s *Server) registerMiddleware() {
 	// Log every incoming request
 	// Log middleware depends on Recover
 	s.Router.Use(middleware.Logger)
+
 	// A panic should not quit the program
 	s.Router.Use(middleware.Recoverer)
 }

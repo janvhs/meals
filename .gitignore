@@ -1,4 +1,9 @@
 *.db
+.env
+node_modules
 
 # macOS specific
 .DS_Store
+
+# tmp
+/frontend

@@ -14,6 +14,7 @@ func (s *Server) registerHandlers() {
 	})
 
 	s.Router.Get("/me", func(w http.ResponseWriter, r *http.Request) {
+		// TODO: Create at server startup
 		auth, err := NewAuthService(AuthConfig(s.Cnf.Auth))
 		if err != nil {
 			slog.Error("initializing auth service", "service", "auth", "msg", err.Error())
@@ -35,7 +36,22 @@ func (s *Server) registerHandlers() {
 			return
 		}
 
+		userRepo := NewUserRepository(s.DB)
+		err = userRepo.EnsureExists(ir.Subject)
+		if err != nil {
+			slog.Error("ensuring user reference", "service", "user repo", "msg", err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		user, err := userRepo.UserByID(ir.Subject)
+		if err != nil {
+			slog.Error("get user reference", "service", "user repo", "msg", err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%#v\n\n%s\n%s\n", ir.Claims, ir.Subject, ir.Email)
+		fmt.Fprintf(w, "%s", user.ID)
 	})
 }

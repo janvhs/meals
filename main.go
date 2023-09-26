@@ -24,6 +24,11 @@ func mainE() error {
 
 	flag.Parse()
 
+	cnf, err := ConfigFromEnv()
+	if err != nil {
+		return err
+	}
+
 	resolvedDBPath, err := ResolveDBPath(dbPath)
 	if err != nil {
 		return err
@@ -40,7 +45,7 @@ func mainE() error {
 		return err
 	}
 
-	srv := NewServer(db)
+	srv := NewServer(db, cnf)
 
 	slog.Info("Server is starting", "address", addr)
 

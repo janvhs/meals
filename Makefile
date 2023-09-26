@@ -5,3 +5,7 @@ lint:
 .PHONY: fmt
 fmt:
 	gofumpt -w -l .
+
+.PHONY: run
+run:
+	. ./.env && go run .

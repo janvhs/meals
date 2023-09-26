@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"errors"
 	"net/http"
 	"strings"
@@ -14,58 +13,49 @@ import (
 // -----------------------------------------------------------------------------
 
 var (
-	ErrCtxNotRegistered    = errors.New("auth: the auth provider is not registered on the context")
 	ErrMissingAuthHeader   = errors.New("auth: request has no authorization header")
 	ErrMissingBearerPrefix = errors.New("auth: the authorization header is missing the bearer prefix")
 	ErrIntrospection       = errors.New("auth: token introspection failed")
 	ErrUnauthenticated     = errors.New("auth: request is not authenticated")
 )
 
-// Context Keys
+// Service
 // -----------------------------------------------------------------------------
 
-var providerKey = &contextKey{
-	name: "auth: provider",
+type AuthConfig struct {
+	Issuer   string
+	ClientID string
+	KeyID    string
+	Key      string
 }
 
-// Middleware
-// -----------------------------------------------------------------------------
-
-// TODO: Move provider creation on per request basis and handle errors via ctx?
-func AuthMiddleware(
-	issuer string,
-	clientID string,
-	keyID string,
-	key string,
-) (func(next http.Handler) http.Handler, error) {
-	provider, err := newResourceServer(issuer, clientID, keyID, key)
-
-	return func(next http.Handler) http.Handler {
-		fn := func(w http.ResponseWriter, r *http.Request) {
-			r = registerProvider(provider, r)
-			next.ServeHTTP(w, r)
-		}
-
-		return http.HandlerFunc(fn)
-	}, err
+type AuthService struct {
+	provider rs.ResourceServer
 }
 
-// Public Functions
-// -----------------------------------------------------------------------------
-
-// TODO: Check scopes?
-func AuthenticateRequest(r *http.Request) (*oidc.IntrospectionResponse, error) {
-	provider, ok := r.Context().Value(providerKey).(rs.ResourceServer)
-	if !ok {
-		return nil, ErrCtxNotRegistered
+func NewAuthService(
+	cnf AuthConfig,
+) (*AuthService, error) {
+	provider, err := newResourceServer(cnf.Issuer, cnf.ClientID, cnf.KeyID, cnf.Key)
+	if err != nil {
+		return nil, err
 	}
 
+	return &AuthService{
+		provider: provider,
+	}, nil
+}
+
+// Public Methods
+// -----------------------------------------------------------------------------
+
+func (a *AuthService) AuthenticateRequest(r *http.Request) (*oidc.IntrospectionResponse, error) {
 	token, err := tokenFromRequest(r)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := rs.Introspect(r.Context(), provider, token)
+	resp, err := rs.Introspect(r.Context(), a.provider, token)
 	if err != nil {
 		return nil, ErrIntrospection
 	}
@@ -74,7 +64,9 @@ func AuthenticateRequest(r *http.Request) (*oidc.IntrospectionResponse, error) {
 		return resp, ErrUnauthenticated
 	}
 
-	return resp, err
+	// TODO: Check scopes?
+
+	return resp, nil
 }
 
 // Private Functions
@@ -87,10 +79,6 @@ func newResourceServer(
 	key string,
 ) (rs.ResourceServer, error) {
 	return rs.NewResourceServerJWTProfile(issuer, clientID, keyID, []byte(key))
-}
-
-func registerProvider(provider rs.ResourceServer, r *http.Request) *http.Request {
-	return r.WithContext(context.WithValue(r.Context(), providerKey, provider))
 }
 
 func tokenFromRequest(r *http.Request) (string, error) {

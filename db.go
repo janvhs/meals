@@ -11,6 +11,7 @@ import (
 
 const driverName = "sqlite"
 
+// TODO: Move into config
 func ResolveDBPath(path string) (string, error) {
 	if path == "" {
 		path = "meals.db"
@@ -29,6 +30,7 @@ func ResolveDBPath(path string) (string, error) {
 // Pragmas and comments copied and modified from pocketbase
 // Source: https://github.com/pocketbase/pocketbase/blob/f266621a0faa68edcd2def57ca6059d203ec15ad/core/db_nocgo.go#L10C1-L22C2.
 func ConnectDB(dbPath string) (*sqlx.DB, error) {
+	// TODO: Read SQLite gotchas from their website
 	pragmas := ""
 
 	// Note: the busy_timeout pragma must be first because
@@ -46,6 +48,7 @@ func ConnectDB(dbPath string) (*sqlx.DB, error) {
 
 func Migrate(db *sql.DB) error {
 	// TODO: Make an slog compatible logger or fork goose
+	// TODO: Config logger via conf
 	goose.SetLogger(goose.NopLogger())
 
 	err := goose.SetDialect(driverName)
@@ -53,5 +56,6 @@ func Migrate(db *sql.DB) error {
 		return err
 	}
 
+	// TODO: Move into config
 	return goose.Up(db, "migrations")
 }

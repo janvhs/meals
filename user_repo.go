@@ -24,5 +24,6 @@ func (r *UserRepository) UserByID(id string) (User, error) {
 
 func (r *UserRepository) EnsureExists(id string) error {
 	_, err := r.DB.Exec("INSERT INTO users (id) VALUES ($1) ON CONFLICT (id) DO NOTHING", id)
+
 	return err
 }

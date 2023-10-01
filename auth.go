@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -69,10 +70,24 @@ func (a *AuthService) AuthenticateRequest(r *http.Request) (*oidc.IntrospectionR
 	return resp, nil
 }
 
+// Public Functions
+
+func HandleAuthError(err error, w http.ResponseWriter) {
+	if errors.Is(err, ErrUnauthenticated) {
+		slog.Warn("unauthenticated request", "service", "auth", "msg", err.Error())
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+	} else if errors.Is(err, ErrIntrospection) {
+		slog.Error("failed introspection", "service", "auth", "msg", err.Error())
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusInternalServerError)
+	} else {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+	}
+}
+
 // Private Functions
 // -----------------------------------------------------------------------------
 
-func newResourceServer(
+func newResourceServer( //nolint
 	issuer string,
 	clientID string,
 	keyID string,

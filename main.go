@@ -45,7 +45,12 @@ func mainE() error {
 		return err
 	}
 
-	srv := NewServer(db, cnf)
+	auth, err := NewAuthService(AuthConfig(cnf.Auth))
+	if err != nil {
+		return err
+	}
+
+	srv := NewServer(db, auth)
 
 	slog.Info("Server is starting", "address", addr)
 

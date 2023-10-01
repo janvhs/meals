@@ -13,20 +13,19 @@ var _ http.Handler = (*Server)(nil)
 
 type Server struct {
 	Router chi.Router
+	Auth   *AuthService
 	DB     *sqlx.DB
-	Cnf    Config
 }
 
-func NewServer(db *sqlx.DB, cnf Config) *Server {
-	// TODO: Set r.NotFound() to json.
-	// TODO: Set r.MethodNotAllowed() to json.
-
+// TODO: Set r.NotFound() to json.
+// TODO: Set r.MethodNotAllowed() to json.
+func NewServer(db *sqlx.DB, auth *AuthService) *Server {
 	r := chi.NewRouter()
 
 	srv := &Server{
 		Router: r,
 		DB:     db,
-		Cnf:    cnf,
+		Auth:   auth,
 	}
 
 	srv.registerMiddleware()

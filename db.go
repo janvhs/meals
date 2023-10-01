@@ -11,7 +11,7 @@ import (
 
 const driverName = "sqlite"
 
-// TODO: Move into config
+// TODO: Move into config.
 func ResolveDBPath(path string) (string, error) {
 	if path == "" {
 		path = "meals.db"
@@ -47,8 +47,8 @@ func ConnectDB(dbPath string) (*sqlx.DB, error) {
 }
 
 func Migrate(db *sql.DB) error {
-	// TODO: Make an slog compatible logger or fork goose
-	// TODO: Config logger via conf
+	// TODO: Make an slog compatible logger or fork goose.
+	// TODO: Config logger via conf.
 	goose.SetLogger(goose.NopLogger())
 
 	err := goose.SetDialect(driverName)
@@ -56,6 +56,6 @@ func Migrate(db *sql.DB) error {
 		return err
 	}
 
-	// TODO: Move into config
+	// TODO: Move into config.
 	return goose.Up(db, "migrations")
 }

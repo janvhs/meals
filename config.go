@@ -12,7 +12,8 @@ type Config struct {
 }
 
 func ConfigFromEnv() (Config, error) {
-	cnf := Config{}
+	var cnf Config
 	err := env.Parse(&cnf)
+
 	return cnf, err
 }

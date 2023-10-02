@@ -14,13 +14,13 @@ var _ http.Handler = (*Server)(nil)
 
 type Server struct {
 	Router chi.Router
-	Auth   *auth.Service
+	Auth   auth.Service
 	DB     *sqlx.DB
 }
 
 // TODO: Set r.NotFound() to json.
 // TODO: Set r.MethodNotAllowed() to json.
-func NewServer(db *sqlx.DB, auth *auth.Service) *Server {
+func NewServer(db *sqlx.DB, auth auth.Service) *Server {
 	r := chi.NewRouter()
 
 	srv := &Server{

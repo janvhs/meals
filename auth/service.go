@@ -22,6 +22,10 @@ var (
 // Service
 // -----------------------------------------------------------------------------
 
+type Service interface {
+	AuthenticateRequest(r *http.Request) (*oidc.IntrospectionResponse, error)
+}
+
 type Config struct {
 	Issuer   string
 	ClientID string
@@ -29,19 +33,21 @@ type Config struct {
 	Key      string
 }
 
-type Service struct {
+var _ Service = (*Authenticator)(nil)
+
+type Authenticator struct {
 	provider rs.ResourceServer
 }
 
 func New(
 	cnf Config,
-) (*Service, error) {
+) (*Authenticator, error) {
 	provider, err := newResourceServer(cnf.Issuer, cnf.ClientID, cnf.KeyID, cnf.Key)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Service{
+	return &Authenticator{
 		provider: provider,
 	}, nil
 }
@@ -49,7 +55,7 @@ func New(
 // Public Methods
 // -----------------------------------------------------------------------------
 
-func (a *Service) AuthenticateRequest(r *http.Request) (*oidc.IntrospectionResponse, error) {
+func (a Authenticator) AuthenticateRequest(r *http.Request) (*oidc.IntrospectionResponse, error) {
 	token, err := tokenFromRequest(r)
 	if err != nil {
 		return nil, err

@@ -5,6 +5,7 @@ go 1.21.0
 require (
 	github.com/caarlos0/env/v9 v9.0.0
 	github.com/go-chi/chi/v5 v5.0.10
+	github.com/go-json-experiment/json v0.0.0-20230922184908-dc36ffcf8533
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/pressly/goose/v3 v3.15.0
 	github.com/zitadel/oidc/v2 v2.11.0

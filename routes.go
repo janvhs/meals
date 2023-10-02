@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"git.bode.fun/meals/auth"
+	"git.bode.fun/meals/internal/httphelper"
 )
 
 func (s *Server) registerHandlers() {
@@ -26,7 +27,7 @@ func (s *Server) registerHandlers() {
 		err = userRepo.EnsureExists(ir.Subject)
 		if err != nil {
 			slog.Error("ensuring user reference", "service", "user repo", "msg", err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			httphelper.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
 		}
@@ -34,7 +35,7 @@ func (s *Server) registerHandlers() {
 		user, err := userRepo.UserByID(ir.Subject)
 		if err != nil {
 			slog.Error("get user reference", "service", "user repo", "msg", err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			httphelper.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
 		}

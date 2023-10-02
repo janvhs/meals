@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"git.bode.fun/meals/auth"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jmoiron/sqlx"
@@ -13,13 +14,13 @@ var _ http.Handler = (*Server)(nil)
 
 type Server struct {
 	Router chi.Router
-	Auth   *AuthService
+	Auth   *auth.Service
 	DB     *sqlx.DB
 }
 
 // TODO: Set r.NotFound() to json.
 // TODO: Set r.MethodNotAllowed() to json.
-func NewServer(db *sqlx.DB, auth *AuthService) *Server {
+func NewServer(db *sqlx.DB, auth *auth.Service) *Server {
 	r := chi.NewRouter()
 
 	srv := &Server{

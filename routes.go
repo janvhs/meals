@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+
+	"git.bode.fun/meals/auth"
 )
 
 func (s *Server) registerHandlers() {
@@ -15,7 +17,7 @@ func (s *Server) registerHandlers() {
 	s.Router.Get("/me", func(w http.ResponseWriter, r *http.Request) {
 		ir, err := s.Auth.AuthenticateRequest(r)
 		if err != nil {
-			HandleAuthError(err, w)
+			auth.HandleError(err, w)
 
 			return
 		}

@@ -1,9 +1,16 @@
+# Database
 *.db
+
+# Environment Vairables
 .env
+.env.*
+!.env.example
+
+# NodeJS shit
 node_modules
 
 # macOS specific
 .DS_Store
 
-# tmp
+# Tmporary
 /frontend

@@ -4,6 +4,8 @@ import (
 	"flag"
 	"log/slog"
 	"os"
+
+	"git.bode.fun/meals/auth"
 )
 
 func main() {
@@ -45,7 +47,7 @@ func mainE() error {
 		return err
 	}
 
-	auth, err := NewAuthService(AuthConfig(cnf.Auth))
+	auth, err := auth.New(auth.Config(cnf.Auth))
 	if err != nil {
 		return err
 	}

@@ -1,8 +1,7 @@
-package main
+package auth
 
 import (
 	"errors"
-	"log/slog"
 	"net/http"
 	"strings"
 
@@ -14,35 +13,35 @@ import (
 // -----------------------------------------------------------------------------
 
 var (
-	ErrMissingAuthHeader   = errors.New("auth: request has no authorization header")
-	ErrMissingBearerPrefix = errors.New("auth: the authorization header is missing the bearer prefix")
-	ErrIntrospection       = errors.New("auth: token introspection failed")
-	ErrUnauthenticated     = errors.New("auth: request is not authenticated")
+	errMissingAuthHeader   = errors.New("auth: request has no authorization header")
+	errMissingBearerPrefix = errors.New("auth: the authorization header is missing the bearer prefix")
+	errIntrospection       = errors.New("auth: token introspection failed")
+	errUnauthenticated     = errors.New("auth: request is not authenticated")
 )
 
 // Service
 // -----------------------------------------------------------------------------
 
-type AuthConfig struct {
+type Config struct {
 	Issuer   string
 	ClientID string
 	KeyID    string
 	Key      string
 }
 
-type AuthService struct {
+type Service struct {
 	provider rs.ResourceServer
 }
 
-func NewAuthService(
-	cnf AuthConfig,
-) (*AuthService, error) {
+func New(
+	cnf Config,
+) (*Service, error) {
 	provider, err := newResourceServer(cnf.Issuer, cnf.ClientID, cnf.KeyID, cnf.Key)
 	if err != nil {
 		return nil, err
 	}
 
-	return &AuthService{
+	return &Service{
 		provider: provider,
 	}, nil
 }
@@ -50,7 +49,7 @@ func NewAuthService(
 // Public Methods
 // -----------------------------------------------------------------------------
 
-func (a *AuthService) AuthenticateRequest(r *http.Request) (*oidc.IntrospectionResponse, error) {
+func (a *Service) AuthenticateRequest(r *http.Request) (*oidc.IntrospectionResponse, error) {
 	token, err := tokenFromRequest(r)
 	if err != nil {
 		return nil, err
@@ -58,30 +57,16 @@ func (a *AuthService) AuthenticateRequest(r *http.Request) (*oidc.IntrospectionR
 
 	resp, err := rs.Introspect(r.Context(), a.provider, token)
 	if err != nil {
-		return nil, ErrIntrospection
+		return nil, errIntrospection
 	}
 
 	if !resp.Active {
-		return resp, ErrUnauthenticated
+		return resp, errUnauthenticated
 	}
 
 	// TODO: Check scopes?
 
 	return resp, nil
-}
-
-// Public Functions
-
-func HandleAuthError(err error, w http.ResponseWriter) {
-	if errors.Is(err, ErrUnauthenticated) {
-		slog.Warn("unauthenticated request", "service", "auth", "msg", err.Error())
-		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-	} else if errors.Is(err, ErrIntrospection) {
-		slog.Error("failed introspection", "service", "auth", "msg", err.Error())
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusInternalServerError)
-	} else {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
-	}
 }
 
 // Private Functions
@@ -99,11 +84,11 @@ func newResourceServer( //nolint
 func tokenFromRequest(r *http.Request) (string, error) {
 	auth := r.Header.Get("authorization")
 	if auth == "" {
-		return "", ErrMissingAuthHeader
+		return "", errMissingAuthHeader
 	}
 
 	if !strings.HasPrefix(auth, oidc.PrefixBearer) {
-		return "", ErrMissingBearerPrefix
+		return "", errMissingBearerPrefix
 	}
 
 	return strings.TrimPrefix(auth, oidc.PrefixBearer), nil

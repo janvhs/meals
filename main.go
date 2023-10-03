@@ -12,7 +12,7 @@ import (
 func main() {
 	if err := mainE(); err != nil {
 		exitCode := 1
-		slog.Error(err.Error(), "exit_code", exitCode)
+		slog.Error("program execution failed", "msg", err.Error(), "exit_code", exitCode)
 		os.Exit(exitCode)
 	}
 }
@@ -55,7 +55,7 @@ func mainE() error {
 
 	srv := NewServer(db, auth)
 
-	slog.Info("Server is starting", "address", addr)
+	slog.Info("starting server", "address", addr)
 
 	// TODO: Graceful shutdown
 	return srv.ListenAndServe(addr)

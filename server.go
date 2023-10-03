@@ -2,10 +2,12 @@ package main
 
 import (
 	"database/sql"
+	"log/slog"
 	"net/http"
 	"time"
 
 	"git.bode.fun/meals/auth"
+	"git.bode.fun/meals/pkg/httplog"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -72,10 +74,11 @@ func (s *Server) registerMiddleware() {
 	// TODO: Add security headers (unrolled/secure)
 	// TODO: Add compression
 	// TODO: Add request timeout
-	// TODO: use slog instead
 
 	// Log every incoming request
 	// Log middleware depends on Recover
+	// s.Router.Use(middleware.RequestLogger(&log.StructuredLogger{Logger: slog.Default()}))
+	middleware.DefaultLogger = middleware.RequestLogger(&httplog.StructuredLogger{Logger: slog.Default()})
 	s.Router.Use(middleware.Logger)
 
 	// A panic should not quit the program

@@ -21,6 +21,6 @@ func Error(w http.ResponseWriter, err string, code int) {
 	}
 
 	if err := json.MarshalWrite(w, &resp); err != nil {
-		slog.Error("failed response", "service", "httphelper", "msg", err.Error())
+		slog.Error("response failed", "service", "httphelper", "msg", err.Error())
 	}
 }

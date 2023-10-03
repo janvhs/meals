@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"path/filepath"
 
+	"git.bode.fun/meals/pkg/migratelog"
 	"github.com/pressly/goose/v3"
 	_ "modernc.org/sqlite"
 )
@@ -54,7 +55,7 @@ func ConnectDB(dbPath string) (*sql.DB, error) {
 func Migrate(db *sql.DB) error {
 	// TODO: Make an slog compatible logger or fork goose.
 	// TODO: Config logger via conf.
-	goose.SetLogger(goose.NopLogger())
+	goose.SetLogger(&migratelog.StructuredLogger{})
 
 	err := goose.SetDialect(driverName)
 	if err != nil {

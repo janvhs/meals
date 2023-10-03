@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"git.bode.fun/meals/auth"
-	"git.bode.fun/meals/internal/httphelper"
 	"git.bode.fun/meals/db/user"
+	"git.bode.fun/meals/internal/httphelper"
 )
 
 func (s *Server) registerHandlers() {

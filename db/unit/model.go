@@ -1,5 +1,5 @@
-package meal
+package unit
 
 import "git.bode.fun/meals/db/gen"
 
-type Meal = gen.Meal
+type Unit = gen.Unit

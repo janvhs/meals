@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.22.0
 
-package db
+package gen
 
 import (
 	"database/sql"
@@ -31,9 +31,6 @@ type MealsIngredient struct {
 	IngredientID int64
 	Amount       int64
 	UnitID       int64
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	DeletedAt    sql.NullTime
 	Foreign      interface{}
 }
 

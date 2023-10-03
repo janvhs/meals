@@ -4,16 +4,16 @@ import (
 	"context"
 	"database/sql"
 
-	mdb "git.bode.fun/meals/db"
+	"git.bode.fun/meals/db/gen"
 )
 
 type Repository struct {
-	queries *mdb.Queries
+	queries *gen.Queries
 }
 
 func New(db *sql.DB) *Repository {
 	return &Repository{
-		queries: mdb.New(db),
+		queries: gen.New(db),
 	}
 }
 

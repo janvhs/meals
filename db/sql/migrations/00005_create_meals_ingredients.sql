@@ -7,10 +7,6 @@ CREATE TABLE meals_ingredients (
     amount        INTEGER NOT NULL,
     unit_id       INTEGER NOT NULL,
 
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at DATETIME          DEFAULT NULL,
-
     FOREIGN KEY (meal_id)       REFERENCES meals(id)
     FOREIGN KEY (ingredient_id) REFERENCES ingredients(id)
     FOREIGN KEY (unit_id)       REFERENCES units(id)

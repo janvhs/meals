@@ -1,13 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"net/http"
 	"time"
 
 	"git.bode.fun/meals/auth"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/jmoiron/sqlx"
 )
 
 var _ http.Handler = (*Server)(nil)
@@ -15,12 +15,12 @@ var _ http.Handler = (*Server)(nil)
 type Server struct {
 	Router chi.Router
 	Auth   auth.Service
-	DB     *sqlx.DB
+	DB     *sql.DB
 }
 
 // TODO: Set r.NotFound() to json.
 // TODO: Set r.MethodNotAllowed() to json.
-func NewServer(db *sqlx.DB, auth auth.Service) *Server {
+func NewServer(db *sql.DB, auth auth.Service) *Server {
 	r := chi.NewRouter()
 
 	srv := &Server{
@@ -65,8 +65,6 @@ func (s *Server) registerMiddleware() {
 	s.Router.Use(middleware.CleanPath)
 	// Remove any trailing slash from the requested resource path
 	s.Router.Use(middleware.StripSlashes)
-
-	// TODO: Add auth middleware
 
 	// TODO: Add some kind of rate limiting (uber)
 	// TODO: Add CORS (rs/cors) https://github.com/rs/cors/blob/master/examples/chi/server.go

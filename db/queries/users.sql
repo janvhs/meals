@@ -1,22 +1,22 @@
--- name: GetUser :one
+-- name: UserGet :one
 SELECT * FROM users
 WHERE id = ? LIMIT 1;
 
--- name: ListUsers :many
+-- name: UserList :many
 SELECT * FROM users
 ORDER BY id;
 
--- name: CreateUser :one
+-- name: UserCreate :one
 INSERT INTO users (id) VALUES (?) RETURNING *;
 
--- name: EnsureExistsUser :exec
+-- name: UserEnsureExists :exec
 INSERT INTO users (id) VALUES (?) ON CONFLICT (id) DO NOTHING;
 
--- name: DeleteUserPermanently :exec
+-- name: UserDeletePermanently :exec
 DELETE FROM users
 WHERE id = ?;
 
--- name: DeleteUserSoftly :exec
+-- name: UserDeleteSoftly :exec
 UPDATE users
 set deleted_at = CURRENT_TIMESTAMP
 WHERE id = ?;

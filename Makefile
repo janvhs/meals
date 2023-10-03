@@ -6,6 +6,10 @@ lint:
 fmt:
 	gofumpt -w -l .
 
+.PHONY: generate
+generate:
+	sqlc generate
+
 .PHONY: run
 run:
 	. ./.env && go run .

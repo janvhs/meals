@@ -9,12 +9,12 @@ import (
 	"context"
 )
 
-const createUser = `-- name: CreateUser :one
+const userCreate = `-- name: UserCreate :one
 INSERT INTO users (id) VALUES (?) RETURNING id, created_at, updated_at, deleted_at
 `
 
-func (q *Queries) CreateUser(ctx context.Context, id string) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, id)
+func (q *Queries) UserCreate(ctx context.Context, id string) (User, error) {
+	row := q.db.QueryRowContext(ctx, userCreate, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -25,43 +25,43 @@ func (q *Queries) CreateUser(ctx context.Context, id string) (User, error) {
 	return i, err
 }
 
-const deleteUserPermanently = `-- name: DeleteUserPermanently :exec
+const userDeletePermanently = `-- name: UserDeletePermanently :exec
 DELETE FROM users
 WHERE id = ?
 `
 
-func (q *Queries) DeleteUserPermanently(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteUserPermanently, id)
+func (q *Queries) UserDeletePermanently(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, userDeletePermanently, id)
 	return err
 }
 
-const deleteUserSoftly = `-- name: DeleteUserSoftly :exec
+const userDeleteSoftly = `-- name: UserDeleteSoftly :exec
 UPDATE users
 set deleted_at = CURRENT_TIMESTAMP
 WHERE id = ?
 `
 
-func (q *Queries) DeleteUserSoftly(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteUserSoftly, id)
+func (q *Queries) UserDeleteSoftly(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, userDeleteSoftly, id)
 	return err
 }
 
-const ensureExistsUser = `-- name: EnsureExistsUser :exec
+const userEnsureExists = `-- name: UserEnsureExists :exec
 INSERT INTO users (id) VALUES (?) ON CONFLICT (id) DO NOTHING
 `
 
-func (q *Queries) EnsureExistsUser(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, ensureExistsUser, id)
+func (q *Queries) UserEnsureExists(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, userEnsureExists, id)
 	return err
 }
 
-const getUser = `-- name: GetUser :one
+const userGet = `-- name: UserGet :one
 SELECT id, created_at, updated_at, deleted_at FROM users
 WHERE id = ? LIMIT 1
 `
 
-func (q *Queries) GetUser(ctx context.Context, id string) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, id)
+func (q *Queries) UserGet(ctx context.Context, id string) (User, error) {
+	row := q.db.QueryRowContext(ctx, userGet, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -72,13 +72,13 @@ func (q *Queries) GetUser(ctx context.Context, id string) (User, error) {
 	return i, err
 }
 
-const listUsers = `-- name: ListUsers :many
+const userList = `-- name: UserList :many
 SELECT id, created_at, updated_at, deleted_at FROM users
 ORDER BY id
 `
 
-func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
-	rows, err := q.db.QueryContext(ctx, listUsers)
+func (q *Queries) UserList(ctx context.Context) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, userList)
 	if err != nil {
 		return nil, err
 	}

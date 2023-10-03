@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"git.bode.fun/meals/auth"
+	mdb "git.bode.fun/meals/db"
 )
 
 func main() {
@@ -31,18 +32,18 @@ func mainE() error {
 		return err
 	}
 
-	resolvedDBPath, err := ResolveDBPath(dbPath)
+	resolvedDBPath, err := mdb.ResolveDBPath(dbPath)
 	if err != nil {
 		return err
 	}
 
-	db, err := ConnectDB(resolvedDBPath)
+	db, err := mdb.ConnectDB(resolvedDBPath)
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	err = Migrate(db.DB)
+	err = mdb.Migrate(db)
 	if err != nil {
 		return err
 	}

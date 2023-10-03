@@ -16,7 +16,7 @@ type StructuredLogger struct {
 }
 
 // NewLogEntry implements middleware.LogFormatter.
-func (l *StructuredLogger) NewLogEntry(r *http.Request) middleware.LogEntry {
+func (l *StructuredLogger) NewLogEntry(r *http.Request) middleware.LogEntry { //nolint
 	var logAttrs []slog.Attr
 
 	if reqID := middleware.GetReqID(r.Context()); reqID != "" {
@@ -61,7 +61,7 @@ func (e *StructuredLogEntry) Panic(v interface{}, stack []byte) {
 }
 
 // Write implements middleware.LogEntry.
-func (e *StructuredLogEntry) Write(status int, bytes int, header http.Header, elapsed time.Duration, extra interface{}) {
+func (e *StructuredLogEntry) Write(status int, bytes int, _ http.Header, elapsed time.Duration, _ interface{}) {
 	e.Logger.Info("request complete",
 		"resp_status", status,
 		"resp_byte_length", bytes,

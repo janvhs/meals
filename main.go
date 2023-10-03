@@ -7,12 +7,19 @@ import (
 
 	"git.bode.fun/meals/auth"
 	mdb "git.bode.fun/meals/db"
+	_ "modernc.org/sqlite"
 )
 
 func main() {
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
+
 	if err := mainE(); err != nil {
 		exitCode := 1
-		slog.Error("program execution failed", "msg", err.Error(), "exit_code", exitCode)
+		slog.Error("program execution failed",
+			"val", err.Error(),
+			"exit_code", exitCode,
+		)
+		
 		os.Exit(exitCode)
 	}
 }
@@ -55,7 +62,10 @@ func mainE() error {
 
 	srv := NewServer(db, auth)
 
-	slog.Info("starting server", "address", addr)
+	slog.Info("starting server",
+		"service", "server",
+		"address", addr,
+	)
 
 	// TODO: Graceful shutdown
 	return srv.ListenAndServe(addr)

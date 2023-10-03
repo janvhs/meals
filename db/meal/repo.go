@@ -17,12 +17,12 @@ func New(db *sql.DB) *Repository {
 	}
 }
 
-type MealCreateParams = gen.MealCreateParams
+type CreateParams = gen.MealCreateParams
 
-func (r *Repository) Create(ctx context.Context, params MealCreateParams) (Meal, error) {
+func (r *Repository) Create(ctx context.Context, params CreateParams) (Meal, error) {
 	return r.queries.MealCreate(ctx, params)
 }
 
-func (r *Repository) List(ctx context.Context, id string) ([]Meal, error) {
+func (r *Repository) List(ctx context.Context) ([]Meal, error) {
 	return r.queries.MealList(ctx)
 }

@@ -6,7 +6,6 @@ import (
 
 	"git.bode.fun/meals/pkg/migratelog"
 	"github.com/pressly/goose/v3"
-	_ "modernc.org/sqlite"
 )
 
 const driverName = "sqlite"
@@ -46,6 +45,7 @@ func ConnectDB(dbPath string) (*sql.DB, error) {
 	err = db.Ping()
 	if err != nil {
 		db.Close()
+
 		return nil, err
 	}
 

@@ -27,7 +27,11 @@ func (s *Server) registerHandlers() {
 		userRepo := user.New(s.DB)
 		err = userRepo.EnsureExists(r.Context(), ir.Subject)
 		if err != nil {
-			slog.Error("ensuring user reference", "service", "user repo", "msg", err.Error())
+			slog.Error("ensuring user reference",
+				"service", "user repo",
+				"val", err.Error(),
+			)
+
 			httphelper.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
@@ -35,7 +39,11 @@ func (s *Server) registerHandlers() {
 
 		user, err := userRepo.Get(r.Context(), ir.Subject)
 		if err != nil {
-			slog.Error("get user reference", "service", "user repo", "msg", err.Error())
+			slog.Error("get user reference",
+				"service", "user repo",
+				"val", err.Error(),
+			)
+
 			httphelper.Error(w, err.Error(), http.StatusInternalServerError)
 
 			return
